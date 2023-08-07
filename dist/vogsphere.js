@@ -20,8 +20,8 @@ https://github.com/magratheaguide/vogsphere/docs/01-getting-started.md
     // get a handle on the place the resulting code needs to go
     const resultBox = document
         .getElementById("js-vogsphere__result")
-        .querySelector("td#code"); // TODO: demo version, comment out when actually using
-    // .querySelector("td#code"); // TODO: real version, works with Jcink's [code] tags
+      //  .querySelector("td#code"); // TODO: demo version, comment out when actually using
+    // .querySelector("td#code"); // TODO: real version, works with Jcink's [code] tags //
 
     const formId = runBtn.getAttribute("form");
     const form = document.getElementById(formId);

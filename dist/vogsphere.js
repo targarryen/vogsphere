@@ -89,8 +89,8 @@ https://github.com/magratheaguide/vogsphere/docs/01-getting-started.md
     // TODO: update/create classes to match the actual claim codes needed for the site
     class fullPost {
         constructor(
-            siteName
-            siteIcon
+            siteName,
+            siteIcon,
             siteLink
         ) {
             this.code = `<a href="${siteLink}" title="${siteName}"><img src="${siteIcon}"></img></a>`;
@@ -173,14 +173,7 @@ ${postBbcodeClose}`;
         };
     }
 
-    // TODO: Update to match class claimPost
-    function compileClaimPost(claims) {
-        let post = new claimPost(
-            claims.fullPost,
-        );
 
-        return post.content;
-    }
 
     function generateClaim() {
         let claims;
@@ -202,11 +195,9 @@ ${postBbcodeClose}`;
 
         claims = fillInClaims();
 
-        post = compileClaimPost(claims);
-
         resultBox.textContent = post;
         return;
     }
 
-    runBtn.addEventListener("click", generateClaimPost, false);
+    runBtn.addEventListener("click", generateClaim, false);
 })();

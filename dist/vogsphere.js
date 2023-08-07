@@ -64,17 +64,9 @@ https://github.com/magratheaguide/vogsphere/docs/01-getting-started.md
     const expectedFormFields = {
         text: [
             "siteName",
-            "faceClaim",
-            "labDescription",
-            "labName",
-            "memberGroup",
-            "occupation",
-            "profileUrl",
-            "requester",
-            "requestLocation",
-            "writerAlias",
+            "siteLink",
+            "siteIcon",
         ],
-        bool: ["isLabLead", "isNewLab", "isRequested"],
     };
     let input = {};
     let errors = [];
@@ -95,114 +87,26 @@ https://github.com/magratheaguide/vogsphere/docs/01-getting-started.md
     }
 
     // TODO: update/create classes to match the actual claim codes needed for the site
-    class faceClaim {
+    class fullPost {
         constructor(
-            characterName,
-            faceClaim,
-            memberGroup,
-            profileUrl,
-            writerAlias
+            siteName
+            siteIcon
+            siteLink
         ) {
-            this.code = `<div class="claim-row">
-    <span class="detail-alitus"><b>${faceClaim}</b></span> as
-    <span class="detail-alitus no-bg text-color-${memberGroup}">
-        <a href="${profileUrl}" title="played by ${writerAlias}">${characterName}</a>
-    </span>
-</div>`;
+            this.code = `<a href="${siteLink}" title="${siteName}"><img src="${siteIcon}"></img></a>`;
         }
     }
 
-    class occupationClaim {
-        constructor(characterName, memberGroup, occupation, profileUrl) {
-            this.code = `<div class="list-item level-3">
-    <span class="list-taken-by text-color-${memberGroup}">
-        <a href="${profileUrl}">${characterName}</a>
-    </span> ${
-        occupation === ""
-            ? ""
-            : `<span class="list-aside">(${occupation})</span>`
-    }
-</div>`;
-        }
-    }
-
-    class labClaim {
-        constructor(isLabLead, labName, labDescription, occupationClaim) {
-            // labs are in the occupation claim list, so the occupation claim code is inserted into the lab claim
-            this.code = `<div class="list-item level-1">
-    <span class="heading-dinorwic">${labName}</span>
-</div>
-
-<div class="textblock-aniak left list-item level-2">
-    ${labDescription}
-</div>
-
-<div class="list-item level-2">
-    <span class="heading-dollfus">Lead</span>
-    <span class="pill-gusev">Limit 1</span>
-</div>
-
-${isLabLead ? occupationClaim.code : ""}
-
-<div class="list-item level-2">
-    <span class="heading-dollfus">Staff</span>
-</div>
-
-${isLabLead ? "" : occupationClaim.code}`;
-        }
-    }
 
     // TODO: update to create the post you want members to reply with
     class claimPost {
         constructor(
-            faceClaim,
-            labClaim,
-            occupationClaim,
-
-            labName,
-            memberGroup,
-            requester,
-            requestLocation,
-
-            isLabLead,
-            isNewLab,
-            isRequested
+            fullPost
         ) {
             // prettier-ignore
             this.content = `${postBbcodeOpen}
-Face claim:
-${codeBbcodeOpen}${faceClaim.code}${codeBbcodeClose}
-
-Occupation claim: ${
-                memberGroup == "scientist"
-                    ? `
-Add to ${labName} as ${isLabLead ? "Lead" : "Staff"}`
-                    : ""
-            }
-${codeBbcodeOpen}${
-                isNewLab ? labClaim.code : occupationClaim.code
-            }${codeBbcodeClose} ${
-                isRequested
-                    ? `
-
-${formatBold("REQUESTED CHARACTER")} ${
-                        requester
-                            ? `
-Requested by: ${requester}`
-                            : ""
-                    } ${
-                        requestLocation
-                            ? `
-Request location: ${
-                                requestLocation &&
-                                /^http/.test(requestLocation)
-                                    ? formatUrl(requestLocation)
-                                    : requestLocation
-                            }`
-                            : ""
-                    }`
-                    : ""
-            }
+Code to post:
+${codeBbcodeOpen}${fullPost.code}${codeBbcodeClose}
 ${postBbcodeClose}`;
         }
     }
@@ -253,81 +157,26 @@ ${postBbcodeClose}`;
             }
         }
 
-        // check that information about requester or request location is provided for requested characters
-        if (
-            input.isRequested.value &&
-            !input.requester.value &&
-            !input.requestLocation.value
-        ) {
-            errors.push(
-                "ERROR: Requested character, need requester name or request location"
-            );
-        }
+       
 
-        // TODO: check for context-sensitive errors (e.g. if member group is A, need to also have provided B)
-        if (
-            input.memberGroup.value == "scientist" &&
-            input.isNewLab.value &&
-            !input.labDescription.value
-        ) {
-            errors.push("ERROR: Missing lab description");
-        }
-
-        //Check for selection on Member group
-        if (!input.memberGroup.value) {
-            errors.push("ERROR: Missing Member group selection");
-        }
-
-        if (input.memberGroup.value == "scientist" && !input.labName.value) {
-            errors.push("ERROR: Missing name of lab");
-        }
-    }
 
     // TODO: list all the different claims you need and the pieces they need to be filled in
     function fillInClaims() {
-        let completeFaceClaim = new faceClaim(
-            input.characterName.value,
-            input.faceClaim.value,
-            input.memberGroup.value,
-            input.profileUrl.value,
-            input.writerAlias.value
+        let completefullPost = new fullPost(
+            input.siteName.value,
+            input.siteLink.value,
+            input.siteIcon.value
         );
-        let completeOccupationClaim = new occupationClaim(
-            input.characterName.value,
-            input.memberGroup.value,
-            input.occupation.value,
-            input.profileUrl.value
-        );
-        // note that the labClaim needs to be handed the occupationClaim
-        let completeLabClaim = new labClaim(
-            input.isLabLead.value,
-            input.labName.value,
-            input.labDescription.value,
-            completeOccupationClaim
-        );
-
+       
         return {
-            faceClaim: completeFaceClaim,
-            occupationClaim: completeOccupationClaim,
-            labClaim: completeLabClaim,
+            fullPost: completeFullPost,
         };
     }
 
     // TODO: Update to match class claimPost
     function compileClaimPost(claims) {
         let post = new claimPost(
-            claims.faceClaim,
-            claims.labClaim,
-            claims.occupationClaim,
-
-            input.labName.value,
-            input.memberGroup.value,
-            input.requester.value,
-            input.requestLocation.value,
-
-            input.isLabLead.value,
-            input.isNewLab.value,
-            input.isRequested.value
+            claims.fullPost,
         );
 
         return post.content;
@@ -359,5 +208,5 @@ ${postBbcodeClose}`;
         return;
     }
 
-    runBtn.addEventListener("click", generateClaim, false);
+    runBtn.addEventListener("click", generateClaimPost, false);
 })();

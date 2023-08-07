@@ -20,7 +20,7 @@ https://github.com/magratheaguide/vogsphere/docs/01-getting-started.md
     // get a handle on the place the resulting code needs to go
     const resultBox = document
         .getElementById("js-vogsphere__result")
-        .querySelector("code"); // TODO: demo version, comment out when actually using
+        .querySelector("td#code"); // TODO: demo version, comment out when actually using
     // .querySelector("td#code"); // TODO: real version, works with Jcink's [code] tags
 
     const formId = runBtn.getAttribute("form");
@@ -43,7 +43,7 @@ https://github.com/magratheaguide/vogsphere/docs/01-getting-started.md
         return `${leftBracket}/${tag}${rightBracket}`;
     } // returns [/tag]
 
-    const postBbcodeName = "pathfinder"; // TODO: should be the name of your site's default bbcode for posting
+    const postBbcodeName = "BASICPOST"; // TODO: should be the name of your site's default bbcode for posting
 
     const postBbcodeOpen = openDohtml(postBbcodeName);
     const postBbcodeClose = closeDohtml(postBbcodeName);
@@ -63,7 +63,7 @@ https://github.com/magratheaguide/vogsphere/docs/01-getting-started.md
     // TODO: names of form fields (as specified by the "name" attribute in the html)
     const expectedFormFields = {
         text: [
-            "characterName",
+            "siteName",
             "faceClaim",
             "labDescription",
             "labName",
